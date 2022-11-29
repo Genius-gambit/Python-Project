@@ -1,6 +1,6 @@
 # Goal
 
-A program which can extract the data from the website and visualize them based on the number of users who are working on the document which is passed in an argument during the execution.
+A program which can extract the data from the json files and visualize them based on the number of users who are working on the document which is passed in an argument during the execution.
 
 # Run Guide
 
