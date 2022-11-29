@@ -5,4 +5,5 @@ A program which can extract the data from the website and visualize them based o
 # Work Log
 
 1. Created a Makefile which can compile the sources for the program.
-2. 
+2. Created srcs directory for all the python files.
+3. Reading part done for json files.
