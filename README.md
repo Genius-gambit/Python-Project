@@ -17,4 +17,10 @@ A program which can extract the data from the json files and visualize them base
 6. Created function which can fetch each row and return them as a string.
 7. Created an array of list from the data to seperate rows.
 8. Created a list to get the visitor_uuids from the array of list.
-9. Working on adding the visitor_country for every visitor__uuid in dictionary.wd
+9. Working on adding the visitor_country for every visitor__uuid in dictionary.
+10. Created function get_visitor_uuids which fetches the uniue id from the list.
+11. Created function get_visitor_countries which collects the initials of the countries in the same order as in the data.
+12. Created a function get count whoch can take the country and uuid as an argument and returns the total number of occurences of uuid along with the country from the argument.
+13. Creating a dictionary which will hold the key value of uuid with vaues of the countries viewed in every count of occurences.
+14. Got the algorithm for getting the keys and values with respect to the uuid
+15. Working on GUI using Tkinter
