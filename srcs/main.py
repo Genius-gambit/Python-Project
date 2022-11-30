@@ -1,5 +1,6 @@
 from cgitb import lookup
 import string
+import uuid
 import pandas as pd
 import argparse
 import json
@@ -36,13 +37,18 @@ def main(file):
 	li = add_my_dict(data)
 	uuid_list = []
 	uuid_list_dict = {}
+	uuid_country = []
 	for i in li:
 		string = str(i)
 		my_dict = json.loads(string)
 		uuid_list.append(my_dict["visitor_uuid"])
-	uuid_list_dict = uuid_list[0]
-	# if (uuid_list.count(uuid_list_dict)):
-	# 	uuid_list_dict[0].add(my_dict["visitor_country"])
-	# 	print(uuid_list_dict)
+		uuid_country.append(my_dict["visitor_country"])
+	uuid_list_dict["visitor_uuid"] = uuid_list[0]
+	uuid_list_dict.update({uuid_country[0] : 1})
+	if (uuid_list[1] == uuid_list_dict.get("visitor_uuid")):
+		if (uuid_list_dict.get(uuid_list[1]) == None):
+			print(uuid_list_dict.get(uuid_list[1]))
+	# print(uuid_list_dict.get("visitor_uuid"))
+	# print(uuid_list_dict)
 if __name__ == '__main__':
 	main(args.file)
