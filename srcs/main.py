@@ -1,3 +1,5 @@
+from cgitb import lookup
+import string
 import pandas as pd
 import argparse
 import json
@@ -14,15 +16,33 @@ def	read_data(file):
 
 def	add_my_dict(data):
 	string = ""
+	counter = 0
+	li = []
 	for i in data:
-		string += string.join(i)
+		if i != '\n':
+			string += string.join(i)
 		if i == '\n':
-			break
-	return string
+			if counter == 0:
+				li = list(string.split("\n"))
+				counter = 1
+				string = ""
+			else:
+				li.extend(list(string.split("\n")))
+				string = ""
+	return li
 
 def main(file):
 	data = read_data(file)
-	string = add_my_dict(data)
-	print(string)
+	li = add_my_dict(data)
+	uuid_list = []
+	uuid_list_dict = {}
+	for i in li:
+		string = str(i)
+		my_dict = json.loads(string)
+		uuid_list.append(my_dict["visitor_uuid"])
+	uuid_list_dict = uuid_list[0]
+	# if (uuid_list.count(uuid_list_dict)):
+	# 	uuid_list_dict[0].add(my_dict["visitor_country"])
+	# 	print(uuid_list_dict)
 if __name__ == '__main__':
 	main(args.file)

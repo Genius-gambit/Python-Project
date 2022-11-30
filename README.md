@@ -15,3 +15,6 @@ A program which can extract the data from the json files and visualize them base
 4. Created function main which will run the main process
 5. Created function read_data which will open the document for reading, extract the data and close the file descriptor to avoid leaks.
 6. Created function which can fetch each row and return them as a string.
+7. Created an array of list from the data to seperate rows.
+8. Created a list to get the visitor_uuids from the array of list.
+9. Working on adding the visitor_country for every visitor__uuid in dictionary.
