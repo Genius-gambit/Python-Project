@@ -23,6 +23,20 @@ A program which can extract the data from the json files and visualize them base
 12. Created a function get count whoch can take the country and uuid as an argument and returns the total number of occurences of uuid along with the country from the argument.
 13. Creating a dictionary which will hold the key value of uuid with vaues of the countries viewed in every count of occurences.
 14. Got the algorithm for getting the keys and values with respect to the uuid
-15. Got the histogram working for the occurences of countries with the given UUID.
-16. Got the GUI for the first task of Number of Viewers for the countries based on the valid UUID.
-17. 
+15. Got the GUI for the first task of Number of Viewers for the countries based on the valid UUID.
+16. Histogram working for the occurences of countries with the given UUID.
+17. Histogram working for the occurences of continents with the given UUID.
+18. Histogram working for the occurences for browsers with the given UUID.
+19. Histogram working for the occurences for specific browsers with the given UUID.
+20. Created a function get_count_conts for getting the number of occurences after converting the country codes to continent names.
+21. Created a function get_count_brows for getting the number of occurences for every uuid viewing their browsers.
+22. Created a function get_count_sbrows for getting the number of occurences for every uuid viewing their common browsers.
+23. Created a function create_dict_uuid_conts for getting the dictionary of continents with the given UUID.
+24. Created a function create_dict_uuid_brows for getting the dictionary of browsers with the given UUID.
+25. Created a function create_dict_uuid_sbrows for getting the dictionary of common browsers with the given UUID.
+26. Created a function filt_brows for filtering the name of the browser along with the version.
+27. Created a function get_hist_countries for building the histogram for the countries.
+28. Created a function get_hist_continents for building the histogram for the continents.
+29. Created a function get_hist_browser for building the histogram for the browsers.
+30. Created a function get_hist_sbrowser for building the histogram for the common browsers.
+31. 

@@ -7,6 +7,8 @@ import tkinter as tk
 from tkinter import messagebox
 from matplotlib import pyplot as plt
 import numpy
+import pycountry_convert as pc
+from iso3166 import countries
 
 root = tk.Tk()
 root.geometry("750x250")
@@ -59,6 +61,14 @@ def get_visitor_countries(li):
 		countries.append(my_dict["visitor_country"])
 	return countries
 
+def get_visitor_brows(li):
+	brows = []
+	for i in li:
+		string = str(i)
+		my_dict = json.loads(string)
+		brows.append(my_dict["visitor_useragent"])
+	return brows
+
 def get_count(li, country, id):
 	count = 0
 	length = len(li)
@@ -70,7 +80,43 @@ def get_count(li, country, id):
 				count += 1
 	return count
 
-def create_dict_uuid(id, countries, li):
+def get_count_conts(li, cont, id):
+	count = 0
+	length = len(li)
+	for i in li:
+		string = str(i)
+		dict1 = json.loads(string)
+		if (dict1["visitor_uuid"] == id):
+			if (cont != "Unknown"):
+				if (pc.convert_continent_code_to_continent_name(pc.country_alpha2_to_continent_code(dict1["visitor_country"])) == cont):
+					count += 1
+			else:
+				count += 1
+	return count
+
+def get_count_brows(li, browser, id):
+	count = 0
+	length = len(li)
+	for i in li:
+		string = str(i)
+		dict1 = json.loads(string)
+		if (dict1["visitor_uuid"] == id):
+			if (str.split(dict1["visitor_useragent"], " ")[0] == browser):
+				count += 1
+	return count
+
+def get_count_sbrows(li, browser, id):
+	count = 0
+	length = len(li)
+	for i in li:
+		string = str(i)
+		dict1 = json.loads(string)
+		if (dict1["visitor_uuid"] == id):
+			if (str.split(str.split(dict1["visitor_useragent"], " ")[0], "/")[0] == browser):
+				count += 1
+	return count
+
+def create_dict_uuid_countries(id, countries, li):
 	dict = {}
 	dict.update({"uuid" : id})
 	length_countries = len(countries)
@@ -78,6 +124,41 @@ def create_dict_uuid(id, countries, li):
 		country = countries[i]
 		count = get_count(li, country, id)
 		dict.update({country : count})
+	return (dict)
+
+def create_dict_uuid_conts(id, countries, li):
+	dict = {}
+	dict.update({"uuid" : id})
+	length_countries = len(countries)
+	for i in range(length_countries):
+		country = countries[i]
+		if country != 'ZZ':
+			cont = pc.convert_continent_code_to_continent_name(pc.country_alpha2_to_continent_code(country))
+		else:
+			cont = "Unknown"
+		count = get_count_conts(li, cont, id)
+		dict.update({cont : count})
+	return (dict)
+
+def create_dict_uuid_brows(id, browsers, li):
+	dict = {}
+	dict.update({"uuid" : id})
+	length = len(browsers)
+	for i in range(length):
+		browser = browsers[i]
+		count = get_count_brows(li, browser, id)
+		dict.update({browser : count})
+	return (dict)
+
+def create_dict_uuid_sbrows(id, sbrowsers, li):
+	dict = {}
+	dict.update({"uuid" : id})
+	length = len(sbrowsers)
+	for i in range(length):
+		browser = sbrowsers[i]
+		count = get_count_sbrows(li, browser, id)
+		dict.update({browser : count})
+	print(dict)
 	return (dict)
 
 def	get_unique_countries(li):
@@ -93,6 +174,19 @@ def	get_unique_countries(li):
 			u_countries.append(countries[i])
 	return u_countries
 
+def filt_brows(browsers):
+	length = len(browsers)
+	for i in range(length):
+		browsers[i] = str.split(browsers[i], " ")[0]
+	return (browsers)
+
+def sp_browsers(browsers):
+	sbrowsers = []
+	length = len(browsers)
+	for i in range(length):
+		sbrowsers.append(str.split(browsers[i], "/")[0])
+	return (sbrowsers)
+
 e = tk.Entry(root, width=50, bg="white")
 e.pack(pady=10)
 file = args.file
@@ -101,29 +195,85 @@ data = read_data(file)
 li = add_my_dict(data)
 uuid_list = get_visitor_uuids(li)
 countries = get_visitor_countries(li)
+browsers = get_visitor_brows(li)
+browsers = filt_brows(browsers)
+sbrowsers = sp_browsers(browsers)
 unique_countries = get_unique_countries(li)
+
+def plt_hist(list_dict_identifiers, list_dict_vals, title, x_label, y_label):
+	plt.title(title)
+	plt.xlabel(x_label)
+	plt.ylabel(y_label)
+	plt.xticks(None, None, ha='right', rotation=55, fontsize=5)
+	plt.bar(list_dict_identifiers, list_dict_vals, width=0.4)
+	plt.ylim(0, max(list_dict_vals) + 1)
+	plt.show()
 
 def get_hist_countries():
 	global uuid
 	uuid = e.get()
 	if uuid in uuid_list:
-		uuid_dict = create_dict_uuid(uuid, countries, li)
+		uuid_dict = create_dict_uuid_countries(uuid, countries, li)
+		uuid_dict.pop("uuid")
+		list_dict_identifiers = list(uuid_dict.keys())
+		for i in range(len(list_dict_identifiers)):
+			if (list_dict_identifiers[i] != "ZZ"):
+				list_dict_identifiers[i] = pc.country_alpha2_to_country_name(list_dict_identifiers[i])
+			else:
+				list_dict_identifiers[i] = "Unknown"
+		list_dict_vals = list(uuid_dict.values())
+		plt_hist(list_dict_identifiers, list_dict_vals, "Total Views", "Countries", "Frequency")
+	else:
+		messagebox.showerror("Error!", "Invalid UUID")
+
+def get_hist_continents():
+	global uuid
+	uuid = e.get()
+	if uuid in uuid_list:
+		uuid_dict = create_dict_uuid_conts(uuid, countries, li)
 		uuid_dict.pop("uuid")
 		list_dict_identifiers = list(uuid_dict.keys())
 		list_dict_vals = list(uuid_dict.values())
-		plt.title("Total Views")
-		plt.xlabel("Countries")
-		plt.ylabel("Frequency")
-		plt.bar(unique_countries, list_dict_vals, width=0.4)
-		plt.ylim(0, max(list_dict_vals) + 1)
-		plt.show()
+		plt_hist(list_dict_identifiers, list_dict_vals, "Total Views", "Continents", "Frequency")
+	else:
+		messagebox.showerror("Error!", "Invalid UUID")
+
+def get_hist_browser():
+	global uuid
+	uuid = e.get()
+	if uuid in uuid_list:
+		uuid_dict = create_dict_uuid_brows(uuid, browsers, li)
+		print(uuid_dict)
+		uuid_dict.pop("uuid")
+		list_dict_identifiers = list(uuid_dict.keys())
+		list_dict_vals = list(uuid_dict.values())
+		plt_hist(list_dict_identifiers, list_dict_vals, "Total Views", "Browsers", "Frequency")
+	else:
+		messagebox.showerror("Error!", "Invalid UUID")
+
+def get_hist_sbrowser():
+	global uuid
+	uuid = e.get()
+	if uuid in uuid_list:
+		uuid_dict = create_dict_uuid_sbrows(uuid, sbrowsers, li)
+		uuid_dict.pop("uuid")
+		list_dict_identifiers = list(uuid_dict.keys())
+		print(list_dict_identifiers)
+		list_dict_vals = list(uuid_dict.values())
+		plt_hist(list_dict_identifiers, list_dict_vals, "Total Views", "Browsers", "Frequency")
 	else:
 		messagebox.showerror("Error!", "Invalid UUID")
 
 def main():
 	root.title("Enter a valid UUID")
-	Button_1 = tk.Button(root, text="Go", command=get_hist_countries)
+	Button_1 = tk.Button(root, text="Get Histogram for views in countries", command=get_hist_countries)
 	Button_1.pack()
+	Button_2 = tk.Button(root, text="Get Histogram for views in continents", command=get_hist_continents)
+	Button_2.pack()
+	Button_3 = tk.Button(root, text="Get Histogram for browser", command=get_hist_browser)
+	Button_3.pack()
+	Button_4 = tk.Button(root, text="Get Histogram for Specific browser", command=get_hist_sbrowser)
+	Button_4.pack()
 	root.mainloop()
 
 if __name__ == '__main__':
