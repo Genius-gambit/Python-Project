@@ -3,7 +3,13 @@ import string
 import pandas as pd
 import argparse
 import json
-import tkinter
+import tkinter as tk
+from tkinter import messagebox
+from matplotlib import pyplot as plt
+import numpy
+
+root = tk.Tk()
+root.geometry("750x250")
 
 parser = argparse.ArgumentParser(description="Reading the valid Document")
 parser.add_argument('file', type=str, help='reading')
@@ -74,24 +80,51 @@ def create_dict_uuid(id, countries, li):
 		dict.update({country : count})
 	return (dict)
 
-def main(file):
-	data = read_data(file)
-	li = add_my_dict(data)
-	uuid_list = get_visitor_uuids(li)
-	countries = get_visitor_countries(li)
-	# country = str(countries[0])
-	length = len(uuid_list)
-	list_dict_identifiers = []
-	list_dict_vals = []
+def	get_unique_countries(li):
+	countries = []
+	for i in li:
+		string = str(i)
+		my_dict = json.loads(string)
+		countries.append(my_dict["visitor_country"])
+	length = len(countries)
+	u_countries = []
 	for i in range(length):
-		id = str(uuid_list[i])
-		uuid_dict = create_dict_uuid(id, countries, li)
-		list_dict_identifiers.append(list(uuid_dict))
-		list_dict_vals.append(list(uuid_dict.values()))
-		if (i == 4):
-			break
-	# print(list_dict_identifiers[5])
-	# print(list_dict_vals[5])
+		if (countries[i] not in u_countries):
+			u_countries.append(countries[i])
+	return u_countries
+
+e = tk.Entry(root, width=50, bg="white")
+e.pack(pady=10)
+file = args.file
+uuid = ""
+data = read_data(file)
+li = add_my_dict(data)
+uuid_list = get_visitor_uuids(li)
+countries = get_visitor_countries(li)
+unique_countries = get_unique_countries(li)
+
+def get_hist_countries():
+	global uuid
+	uuid = e.get()
+	if uuid in uuid_list:
+		uuid_dict = create_dict_uuid(uuid, countries, li)
+		uuid_dict.pop("uuid")
+		list_dict_identifiers = list(uuid_dict.keys())
+		list_dict_vals = list(uuid_dict.values())
+		plt.title("Number of Times Viewed")
+		plt.xlabel("Countries")
+		plt.ylabel("Frequency")
+		plt.bar(unique_countries, list_dict_vals, width=0.4)
+		plt.ylim(0, max(list_dict_vals) + 1)
+		plt.show()
+	else:
+		messagebox.showerror("Error!", "Invalid UUID")
+
+def main():
+	root.title("Enter a valid UUID")
+	Button_1 = tk.Button(root, text="Go", command=get_hist_countries)
+	Button_1.pack()
+	root.mainloop()
 
 if __name__ == '__main__':
-	main(args.file)
+	main()

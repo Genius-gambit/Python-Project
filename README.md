@@ -23,4 +23,6 @@ A program which can extract the data from the json files and visualize them base
 12. Created a function get count whoch can take the country and uuid as an argument and returns the total number of occurences of uuid along with the country from the argument.
 13. Creating a dictionary which will hold the key value of uuid with vaues of the countries viewed in every count of occurences.
 14. Got the algorithm for getting the keys and values with respect to the uuid
-15. Working on GUI using Tkinter
+15. Got the histogram working for the occurences of countries with the given UUID.
+16. Got the GUI for the first task of Number of Viewers for the countries based on the valid UUID.
+17. 
