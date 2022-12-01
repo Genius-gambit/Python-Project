@@ -111,7 +111,7 @@ def get_hist_countries():
 		uuid_dict.pop("uuid")
 		list_dict_identifiers = list(uuid_dict.keys())
 		list_dict_vals = list(uuid_dict.values())
-		plt.title("Number of Times Viewed")
+		plt.title("Total Views")
 		plt.xlabel("Countries")
 		plt.ylabel("Frequency")
 		plt.bar(unique_countries, list_dict_vals, width=0.4)
