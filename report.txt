@@ -1,0 +1,17 @@
+Introduction:
+
+This project is to summarise the data by giving it a data visualization for the number of occurences in any factor based on the given ID.
+The assumptions I have made in this project since this project supports GUI. With User input we could have histogram of any UUID and generate the result for any factor.
+
+Requirement's checklist:
+
+The project is coded with Python programming language. Checklist for 1.
+The prgram takes UUID as User input and takes a task from the user to generate the histogram.
+There are various option sfor the user to choose what they want. 
+Histogram for the number of countries viewed or Histogram for the number of continents viewed, Checklist for 2
+Histogram for the number of browsers viewed. From the user it can present the result with either the version of the browser or the name of the browser. Check list for 3
+During the launch of the program, the program asks for the UUID from the User input and the task for what histogram they want.
+
+Design Consideration:
+During the launch of the program. The program requires an argument for the executable file and the document for json file.
+After the launch it finishes the reading and sets up the configuration details for the UUID. It opens the window and ask the user to write a valid UUID and provides a multiple options for the user to generate the histogram for which aspect. If the user writes an invalid UUID means if the textbox is empty or the given UUID is not in the document.

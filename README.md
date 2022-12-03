@@ -39,4 +39,4 @@ A program which can extract the data from the json files and visualize them base
 28. Created a function get_hist_continents for building the histogram for the continents.
 29. Created a function get_hist_browser for building the histogram for the browsers.
 30. Created a function get_hist_sbrowser for building the histogram for the common browsers.
-31. 
+31. Created a function get_readers which fetches the information for all the readers in the file and counts the number of frequencies and returns the diction with sorted values 

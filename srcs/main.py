@@ -1,18 +1,22 @@
 from cgitb import lookup
+from csv import reader
 import string
 import pandas as pd
 import argparse
 import json
 import tkinter as tk
 from tkinter import messagebox
-from matplotlib import pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
+# from matplotlib import pyplot as plt
 import numpy
 import pycountry_convert as pc
-from iso3166 import countries
+# from iso3166 import countries
 
 root = tk.Tk()
+# plt.use('TkAgg')
 root.geometry("750x250")
-
 parser = argparse.ArgumentParser(description="Reading the valid Document")
 parser.add_argument('file', type=str, help='reading')
 args = parser.parse_args()
@@ -161,6 +165,33 @@ def create_dict_uuid_sbrows(id, sbrowsers, li):
 	print(dict)
 	return (dict)
 
+def get_readers(li):
+	readers_list = []
+	unique_readers_list = []
+	freq_occurences = []
+	read_dict = {}
+	for i in li:
+		string = str(i)
+		my_dict = json.loads(string)
+		if (my_dict["env_type"] == "reader"):
+			readers_list.append(my_dict["visitor_uuid"])
+	length = len(readers_list)
+	for i in range(length):
+		if (readers_list[i] not in unique_readers_list):
+			unique_readers_list.append(readers_list[i])
+	length = len(unique_readers_list)
+	for i in range(len(unique_readers_list)):
+		count = 0
+		for j in range(len(readers_list)):
+			if (unique_readers_list[i] == readers_list[j]):
+				count += 1
+		freq_occurences.append(count)
+	for i in range(len(unique_readers_list)):
+		read_dict.update({unique_readers_list[i] : freq_occurences[i]})
+	read_dict = dict(sorted(read_dict.items(), key=lambda item: item[1], reverse=True))
+	return (read_dict)
+
+
 def	get_unique_countries(li):
 	countries = []
 	for i in li:
@@ -187,6 +218,7 @@ def sp_browsers(browsers):
 		sbrowsers.append(str.split(browsers[i], "/")[0])
 	return (sbrowsers)
 
+
 e = tk.Entry(root, width=50, bg="white")
 e.pack(pady=10)
 file = args.file
@@ -198,6 +230,7 @@ countries = get_visitor_countries(li)
 browsers = get_visitor_brows(li)
 browsers = filt_brows(browsers)
 sbrowsers = sp_browsers(browsers)
+readers = get_readers(li)
 unique_countries = get_unique_countries(li)
 
 def plt_hist(list_dict_identifiers, list_dict_vals, title, x_label, y_label):
@@ -264,6 +297,25 @@ def get_hist_sbrowser():
 	else:
 		messagebox.showerror("Error!", "Invalid UUID")
 
+def top_readers():
+	reader_keys = readers.keys()
+	reader_vals = readers.values()
+	iterate = 0
+	raw_keys = []
+	raw_vals = []
+	for i in reader_keys:
+		if (iterate == 10):
+			break
+		raw_keys.append(i)
+		iterate += 1
+	iterate = 0
+	for i in reader_vals:
+		if (iterate == 10):
+			break
+		raw_vals.append(i)
+		iterate += 1
+	plt_hist(raw_keys, raw_vals, "Top 10 Readers", "UUID", "Frequecies")
+
 def main():
 	root.title("Enter a valid UUID")
 	Button_1 = tk.Button(root, text="Get Histogram for views in countries", command=get_hist_countries)
@@ -273,6 +325,8 @@ def main():
 	Button_3 = tk.Button(root, text="Get Histogram for browser", command=get_hist_browser)
 	Button_3.pack()
 	Button_4 = tk.Button(root, text="Get Histogram for Specific browser", command=get_hist_sbrowser)
+	Button_4.pack()
+	Button_4 = tk.Button(root, text="Get Top 10 Readers", command=top_readers)
 	Button_4.pack()
 	root.mainloop()
 
