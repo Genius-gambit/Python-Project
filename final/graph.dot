@@ -1,6 +1,7 @@
-graph G {
+digraph G {
 size="16,16";
 splines=true;
-	a [color="black", fillcolor="red"]
-    b [color="green"]
+"4154" -> "ed78"
+"4154" -> "ed79"
+"fbde" -> "ed79"
 }

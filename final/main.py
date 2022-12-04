@@ -436,33 +436,6 @@ def execute_s_brows():
 	else:
 		print("Error")
 
-def execute():
-	if (args.task_id == "2a"):
-		execute_countries()
-	elif (args.task_id == "2b"):
-		execute_conts()
-	elif (args.task_id == "3a"):
-		execute_brows()
-	elif (args.task_id == "3b"):
-		execute_s_brows()
-	elif (args.task_id == "4"):
-		top_readers()
-
-def get_doc_read(uuid):
-	doc_uuids = []
-	if (uuid in uuid_list):
-		for i in li:
-			string = str(i)
-			my_dict = json.loads(string)
-			if (my_dict.get("visitor_uuid") != None):
-				if (my_dict.get("visitor_uuid") == uuid):
-					if (my_dict.get('subject_doc_id') != None):
-						if (my_dict.get('subject_doc_id') not in doc_uuids):
-							if (my_dict.get("event_type")) != None:
-								if (my_dict.get("event_type")) == "read":
-									doc_uuids.append(my_dict.get("subject_doc_id"))
-		return doc_uuids
-
 def top_10_doc():
 	doc_uuids = {}
 	lis_doc = []
@@ -566,6 +539,130 @@ def also_like():
 					out.write("\"\n")
 					count += 1
 		out.write('}\n')
+	
+def exec_10_docs():
+	doc_uuids = {}
+	lis_doc = []
+	lis_vis = []
+	doc_uuid = args.doc_uuid
+	vis_uuid = args.user_uuid
+	if (doc_uuid in u_docs):
+		if (vis_uuid in uuid_list):
+			sorted_dict = {}
+			for j in range(len(u_docs)):
+				lis_vis = []
+				for i in li:
+					string = str(i)
+					my_dict = json.loads(string)
+					if (my_dict.get("subject_doc_id") != None):
+						if (my_dict.get("subject_doc_id") == u_docs[j]):
+							if (my_dict.get("visitor_uuid") not in lis_vis):
+								lis_vis.append(my_dict.get("visitor_uuid"))
+				doc_uuids.update({u_docs[j] : lis_vis})
+			count = 0
+			for k in sorted(doc_uuids, key=lambda k: len(doc_uuids[k]), reverse=True):
+				sorted_dict.update({k : doc_uuids.get(k)})
+				count += 1
+				print(k)
+				if (count == 10):
+					break
+		else:
+			print("Error")
+	else:
+		print("Error")
+
+def exec_also_likes():
+	doc_uuids = {}
+	lis_doc = []
+	lis_vis = []
+	doc_uuid = args.doc_uuid
+	vis_uuid = args.user_uuid
+	sorted_dict = {}
+	for j in range(len(u_docs)):
+		lis_vis = []
+		for i in li:
+			string = str(i)
+			my_dict = json.loads(string)
+			if (my_dict.get("subject_doc_id") != None):
+				if (my_dict.get("subject_doc_id") == u_docs[j]):
+					if (my_dict.get("visitor_uuid") not in lis_vis):
+						lis_vis.append(my_dict.get("visitor_uuid"))
+		doc_uuids.update({u_docs[j] : lis_vis})
+	count = 0
+	for k in sorted(doc_uuids, key=lambda k: len(doc_uuids[k]), reverse=True):
+		sorted_dict.update({k : doc_uuids.get(k)})
+	readers_trial = sorted_dict.get(doc_uuid)
+	readers_docs = []
+	final_readers = []
+	dict_also_like = {}
+	for i in range(len(readers_trial)):
+		readers_docs = get_doc_read(str(readers_trial[i]))
+		if (len(readers_docs) > 0):
+			final_readers.append(readers_docs)
+			for j in range(len(final_readers)):
+				dict_also_like.update({str(readers_trial[i]) : final_readers[j]})
+	length = len(dict_also_like)
+	list_readers = list(dict_also_like.keys())
+	list_docs = list(dict_also_like.values())
+	count = 0
+	with open('graph.dot','w') as out:
+		for line in ('digraph G {','size="16,16";','splines=true;'):
+			out.write('{}\n'.format(line))
+		for start in range(len(list_readers)):
+			out.write("\"")
+			string = list_readers[start]
+			out.write(string[len(string) - 4 : len(string)])
+			out.write("\"")
+			out.write(' -> ')
+			out.write("\"")
+			string = list_docs[start]
+			count = 0
+			if (len(string) > 0):
+				for j in range(len(string)):
+					if (count > 0):
+						out.write("\"")
+						string1 = list_readers[start]
+						out.write(string1[len(string1) - 4 : len(string1)])
+						out.write("\"")
+						out.write(' -> ')
+						out.write("\"")
+					string = list_docs[start][j]
+					out.write(string[len(string) - 4 : len(string)])
+					out.write("\"\n")
+					count += 1
+		out.write('}\n')
+
+def execute():
+	if (args.task_id == "2a"):
+		execute_countries()
+	elif (args.task_id == "2b"):
+		execute_conts()
+	elif (args.task_id == "3a"):
+		execute_brows()
+	elif (args.task_id == "3b"):
+		execute_s_brows()
+	elif (args.task_id == "4"):
+		top_readers()
+	elif (args.task_id == "5d"):
+		exec_10_docs()
+	elif (args.task_id == "6"):
+		exec_also_likes()
+
+def get_doc_read(uuid):
+	doc_uuids = []
+	if (uuid in uuid_list):
+		for i in li:
+			string = str(i)
+			my_dict = json.loads(string)
+			if (my_dict.get("visitor_uuid") != None):
+				if (my_dict.get("visitor_uuid") == uuid):
+					if (my_dict.get('subject_doc_id') != None):
+						if (my_dict.get('subject_doc_id') not in doc_uuids):
+							if (my_dict.get("event_type")) != None:
+								if (my_dict.get("event_type")) == "read":
+									doc_uuids.append(my_dict.get("subject_doc_id"))
+		return doc_uuids
+
 
 def main():
 	root.title("Enter a valid UUID")
