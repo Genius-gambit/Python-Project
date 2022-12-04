@@ -1,0 +1,6 @@
+graph G {
+size="16,16";
+splines=true;
+	a [color="black", fillcolor="red"]
+    b [color="green"]
+}
